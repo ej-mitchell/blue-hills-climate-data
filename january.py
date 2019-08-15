@@ -8,12 +8,22 @@ import pandas as pd
 app = dash.Dash()
 df = pd.read_csv('data/1919_2019_global-monthly.csv')
 
+# TODO: Get this done more iteratively
 is_january = df['DATE'].str.contains('-01', regex=False)
 january_df = df[is_january]
+
+is_february = df['DATE'].str.contains('-02', regex=False)
+february_df = df[is_february]
+
 cols = ["DX70","DX90","EMSN","EMXP","EMXT","SNOW","TAVG"]
 
 app.layout = html.Div(children=[
     html.Div(children=[
+        dcc.Dropdown(
+            id='month',
+            options=[{'label': 'January', 'value': january_df.to_json()}, {'label': 'February', 'value': february_df.to_json()}],
+            value=january_df.to_json()
+        ),
         dcc.Dropdown(
             id='stat',
             options=[{'label': i, 'value': i} for i in cols],
@@ -28,12 +38,13 @@ app.layout = html.Div(children=[
 
 @app.callback(
     dash.dependencies.Output('stats-graph', 'figure'),
-    [dash.dependencies.Input('stat', 'value')])
-def select_stat(stat):
+    [dash.dependencies.Input('stat', 'value'), dash.dependencies.Input('month', 'value')])
+def select_stat(stat, month):
+    df = pd.read_json(month)
     return {
         'data': [go.Bar(
-            x = january_df['DATE'],
-            y = january_df[stat]
+            x = df['DATE'],
+            y = df[stat]
         )],
         'layout': go.Layout(
             title='{}'.format(stat),
