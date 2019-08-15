@@ -1,0 +1,10 @@
+
+{
+	"EMXP": "Highest daily total of precipitation in the month",
+	"TAVG": "Avg. Monthly Temperature",
+	"DX90": "Days greater than or equal to 90 deg F",
+	"DX70": "Days greater than or equal to 70 deg F",
+	"EMSN": "Highest daily snowfall in the month (inches)",
+	"EMXT": "Extreme maximum temperature for month",
+	"SNOW": "Total Monthly/Annual Snowfall"
+}
