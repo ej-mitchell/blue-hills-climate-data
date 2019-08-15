@@ -8,12 +8,26 @@ import pandas as pd
 app = dash.Dash()
 df = pd.read_csv('data/1919_2019_global-monthly.csv')
 
-# TODO: Get this done more iteratively
-is_january = df['DATE'].str.contains('-01', regex=False)
-january_df = df[is_january]
+month_numbers = {
+    "January": "01", 
+    "February": "02", 
+    "March": "03", 
+    "April": "04", 
+    "May": "05",
+    "June": "06",
+    "July": "07",
+    "August": "08",
+    "September": "09",
+    "October": "10",
+    "November": "11",
+    "December": "12"
+}
 
-is_february = df['DATE'].str.contains('-02', regex=False)
-february_df = df[is_february]
+month_dfs = {}
+
+for month in month_numbers:
+    is_month = df['DATE'].str.contains("-{}".format(month_numbers[month]), regex=False)
+    month_dfs[month] = df[is_month]
 
 cols = ["DX70","DX90","EMSN","EMXP","EMXT","SNOW","TAVG"]
 
@@ -21,8 +35,8 @@ app.layout = html.Div(children=[
     html.Div(children=[
         dcc.Dropdown(
             id='month',
-            options=[{'label': 'January', 'value': january_df.to_json()}, {'label': 'February', 'value': february_df.to_json()}],
-            value=january_df.to_json()
+            options=[{'label': i, 'value': month_dfs[i].to_json()} for i in month_dfs],
+            value=month_dfs["January"].to_json()
         ),
         dcc.Dropdown(
             id='stat',
@@ -49,7 +63,7 @@ def select_stat(stat, month):
         'layout': go.Layout(
             title='{}'.format(stat),
             showlegend=False,
-            margin=go.layout.Margin(l=40, r=0, t=40, b=30)
+            margin=go.layout.Margin(l=20, r=10, t=40, b=30)
         )
 
     }
