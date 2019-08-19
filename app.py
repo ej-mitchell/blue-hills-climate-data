@@ -23,13 +23,21 @@ month_numbers = {
     "December": "12"
 }
 
+title_map = {
+	"EMXP": "Highest daily total of precipitation in the month",
+	"TAVG": "Avg. Monthly Temperature",
+	"DX90": "Days greater than or equal to 90 deg F",
+	"DX70": "Days greater than or equal to 70 deg F",
+	"EMSN": "Highest daily snowfall in the month (inches)",
+	"EMXT": "Extreme maximum temperature for month",
+	"SNOW": "Total Monthly Snowfall"
+}
+
 month_dfs = {}
 
 for month in month_numbers:
     is_month = df['DATE'].str.contains("-{}".format(month_numbers[month]), regex=False)
     month_dfs[month] = df[is_month]
-
-cols = ["DX70","DX90","EMSN","EMXP","EMXT","SNOW","TAVG"]
 
 app.layout = html.Div(children=[
     html.Div(children=[
@@ -40,9 +48,8 @@ app.layout = html.Div(children=[
         ),
         dcc.Dropdown(
             id='stat',
-            options=[{'label': i, 'value': i} for i in cols],
+            options=[{'label': title_map[i], 'value': i} for i in title_map],
             value='EMXP'
-
         ),
         dcc.Graph(
             id='stats-graph'
@@ -61,7 +68,7 @@ def select_stat(stat, month):
             y = df[stat]
         )],
         'layout': go.Layout(
-            title='{}'.format(stat),
+            title='{}'.format(title_map[stat]),
             showlegend=False,
             margin=go.layout.Margin(l=20, r=10, t=40, b=30)
         )
